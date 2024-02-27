@@ -14,6 +14,7 @@ using namespace std;
 #include "include/json.hpp"
 using json = nlohmann::json;
 
+
 /*------------------------------ Constantes ---------------------------------*/
 #define BAUD 9600           // Frequence de transmission serielle
 #define MSG_MAX_SIZE 1024   // Longueur maximale d'un message
@@ -43,22 +44,27 @@ int main() {
         cerr << "Impossible de se connecter au port " << string(com) << ". Fermeture du programme!" << endl;
         exit(1);
     }
+    else {
+        cout << "Connexion OK "<<endl;
+    }
 
     // Structure de donnees JSON pour envoie et reception
     int led_state = 1;
     json j_msg_send, j_msg_rcv;
 
+    
     // Boucle pour tester la communication bidirectionnelle Arduino-PC
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 30; i++) {
         // Envoie message Arduino
-        j_msg_send["led"] = led_state;
-        if (!SendToSerial(arduino, j_msg_send)) {
-            cerr << "Erreur lors de l'envoie du message. " << endl;
-        }
+        //j_msg_send["led"] = led_state;
         // Reception message Arduino
         j_msg_rcv.clear(); // effacer le message precedent
         if (!RcvFromSerial(arduino, raw_msg)) {
             cerr << "Erreur lors de la reception du message. " << endl;
+        }
+        else {
+            cout << "On a eu un message" << endl;
+            cout << "Message size : " << raw_msg.size() << endl;
         }
 
         // Impression du message de l'Arduino si valide
@@ -67,10 +73,32 @@ int main() {
             // Transfert du message en json
             j_msg_rcv = json::parse(raw_msg);
             cout << "Message de l'Arduino: " << j_msg_rcv << endl;
+            
+            j_msg_send["led"] = "ALLO";
+
+            string rep;
+            cout << j_msg_send << endl;
+            cout << "Ecrire a l'ecran : Oui ou Non " << endl;
+            cin >> rep;
+
+            if (rep == "Oui" || rep == "oui" || rep == "O" || rep == "o") {
+                // Envoi du message à l'Arduino
+                if (!SendToSerial(arduino, j_msg_send)) {
+                    cerr << "Erreur lors de l'envoie du message. " << endl;
+                }
+                else {
+                    cout << "Message envoyé à l'Arduino." << endl;
+                }
+            }
+            else {
+                cout << "Message non envoyé à l'Arduino." << endl;
+            }
+
+           
         }
 
         //Changement de l'etat led
-        led_state = !led_state;
+        //led_state = !led_state;
 
         // Bloquer le fil pour environ 1 sec
         Sleep(1000); // 1000ms

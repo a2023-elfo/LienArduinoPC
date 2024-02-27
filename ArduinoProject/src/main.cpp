@@ -6,10 +6,14 @@
 /*------------------------------ Librairies ---------------------------------*/
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <LiquidCrystal.h>
+
 
 /*------------------------------ Constantes ---------------------------------*/
 
 #define BAUD 9600        // Frequence de transmission serielle
+const int rs = 42, en = 40, d4 = 38, d5 = 36, d6 = 34, d7 = 32;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 /*---------------------------- Variables globales ---------------------------*/
 
@@ -18,35 +22,143 @@ volatile bool shouldRead_ = false;  // Drapeau prêt à lire un message
 
 int ledState = 0;
 int potValue = 0;
+int joy_X_Value = 0;
+int joy_Y_Value = 0;
+int joy_X_etat = 0;
+int joy_Y_etat = 0;
 
 int pinLED = 24;
 int pinPOT = A0;
+int pinjoy_X= A15;
+int pinjoy_Y= A14;
 
+int SW1 = 30 ;
+int a =0;
+//int SW2 = PIN ;
+//int SW3 = PIN ;
+//int SW4 = PIN ;
+//int SW5 = PIN ;
+//int SW6 = PIN ;
+
+int bouton = 0 ;
+ 
 
 /*------------------------- Prototypes de fonctions -------------------------*/
 void sendMsg(); 
 void readMsg();
 void serialEvent();
+
+
+
 /*---------------------------- Fonctions "Main" -----------------------------*/
 
 void setup() {
   Serial.begin(BAUD);               // Initialisation de la communication serielle
   pinMode(pinLED, OUTPUT);
   digitalWrite(pinLED, ledState);
+  lcd.setCursor(0,0);
+  lcd.begin(16, 2);
+  lcd.print("Lien Arduino-PC");
+  
 }
 
 /* Boucle principale (infinie) */
 void loop() {
+ 
+   if (shouldRead_) {
+      readMsg();
+      sendMsg();
+    }
 
-  if(shouldRead_){
-    readMsg();
-    sendMsg();
+  joy_X_Value = analogRead(pinjoy_X);
+  joy_Y_Value = analogRead(pinjoy_Y);
+
+  if(joy_X_Value>800 && joy_Y_Value<580 && joy_Y_Value>480){
+
+    joy_X_etat = 1; 
+  }
+   else if (joy_Y_Value>800 && joy_X_Value<580 && joy_X_Value>480){
+
+    joy_Y_etat = 1;
+  }
+  else if (joy_X_Value<200 && joy_Y_Value<580 && joy_Y_Value>480){
+
+    joy_X_etat = -1;
+  }
+  else if (joy_Y_Value<200 && joy_X_Value<580 && joy_X_Value>480){
+
+    joy_Y_etat = -1;
+  }
+  //DIAGONALE
+  else if (joy_Y_Value<200 && joy_X_Value>800 ){
+
+    joy_Y_etat = -1;
+    joy_X_etat = 1;
+  }
+  else if (joy_Y_Value<200 && joy_X_Value<200 ){
+
+    joy_Y_etat = -1;
+    joy_X_etat = -1;
+  }
+  else if (joy_Y_Value>800 && joy_X_Value<200 ){
+
+    joy_Y_etat = 1;
+    joy_X_etat = -1;
+  }
+  else if (joy_Y_Value>800 && joy_X_Value>800 ){
+
+    joy_Y_etat = 1;
+    joy_X_etat = 1;
   }
 
-  potValue = analogRead(pinPOT);
-  //Serial.println(potValue);          // debug
+  else{
+    joy_X_etat = 0;
+    joy_Y_etat =0;
+  }
+
+  // Bouton 
+  if (digitalRead(SW1)== LOW)
+  {
+    bouton = 1;
+    delay(10);
+  }
+  /*else if (digitalRead(SW2)== LOW)
+  {
+    bouton = 2;
+    delay(100);
+  }
+  else if (digitalRead(SW3)== LOW)
+  {
+    bouton = 3;
+    delay(100);
+  }
+  else if (digitalRead(SW4)== LOW)
+  {
+    bouton = 4;
+    delay(100);
+  }
+  else if (digitalRead(SW5)== LOW)
+  {
+    bouton = 5;
+    delay(100);
+  }
+  else if (digitalRead(SW6)== LOW)
+  {
+    bouton = 6;
+    delay(100);
+  }*/
+  else
+  {
+    bouton = 0;
+  }
+
+    
+   
+  
   delay(10);  // delais de 10 ms
 }
+
+// 1023 - 800 // 0-200 // X et Y 
 
 /*---------------------------Definition de fonctions ------------------------*/
 
@@ -63,7 +175,9 @@ void sendMsg() {
   StaticJsonDocument<500> doc;
   // Elements du message
   doc["time"] = millis();
-  doc["analog"] = potValue;
+  doc["X"] = joy_X_etat;
+  doc["Y"] = joy_Y_etat;
+  doc["Bouton"] = bouton;
 
   // Serialisation
   serializeJson(doc, Serial);
@@ -96,9 +210,14 @@ void readMsg(){
   }
   
   // Analyse des éléments du message message
-  parse_msg = doc["led"];
+  parse_msg = doc["Affichage"];
+
+  Serial.print(parse_msg.as<String>());
+  /*
   if (!parse_msg.isNull()) {
-    // mettre la led a la valeur doc["led"]
-    digitalWrite(pinLED,doc["led"].as<bool>());
-  }
+  lcd.setCursor(0,1);  
+  lcd.print(parse_msg);
+  
+  }*/
 }
+
