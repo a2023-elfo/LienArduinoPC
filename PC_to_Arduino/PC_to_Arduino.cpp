@@ -46,14 +46,23 @@ int main() {
 
     // Structure de donnees JSON pour envoie et reception
     int led_state = 1;
+    int recuBouton = 0;
+    int recuX = 0;
+    int recuY = 0;
     json j_msg_send, j_msg_rcv;
 
     // Boucle pour tester la communication bidirectionnelle Arduino-PC
     for (int i = 0; i < 30; i++) {
         // Envoie message Arduino
         j_msg_send["led"] = led_state;
+        j_msg_send["affichage"] = "lol";
+        j_msg_send["affichage_format"] = "x : " + to_string(recuX) + " y : " + to_string(recuY);
+
         if (!SendToSerial(arduino, j_msg_send)) {
             cerr << "Erreur lors de l'envoie du message. " << endl;
+        }
+        else {
+            cout << "Message envoyé à l'Arduino :" << j_msg_send << endl;
         }
         // Reception message Arduino
         j_msg_rcv.clear(); // effacer le message precedent
@@ -67,6 +76,9 @@ int main() {
             // Transfert du message en json
             j_msg_rcv = json::parse(raw_msg);
             cout << "Message de l'Arduino: " << j_msg_rcv << endl;
+
+            recuX = j_msg_rcv.value("X", 0);
+            recuY = j_msg_rcv.value("Y", 0);
         }
 
         //Changement de l'etat led

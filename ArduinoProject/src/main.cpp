@@ -166,4 +166,12 @@ void readMsg(){
     // mettre la led a la valeur doc["led"]
     digitalWrite(pinLED,doc["led"].as<bool>());
   }
+
+  parse_msg = doc["affichage_format"];
+  if (!parse_msg.isNull()) {
+    // mettre la led a la valeur doc["led"]
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print(doc["affichage_format"].as<String>());
+  }
 }
