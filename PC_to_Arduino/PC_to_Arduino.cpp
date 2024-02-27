@@ -38,6 +38,11 @@ int main() {
     cin >> com;
     arduino = new SerialPort(com.c_str(), BAUD);
 
+    //Struct. Données JSON 
+    int recuX = 0;
+    int recuY = 0;
+    int bouton = 0;
+    
     //const char com = "\\\\.\\COM3";
     //SerialPort arduino = SerialPort("\\\\.\\COM3");
     if (!arduino->isConnected()) {
@@ -52,55 +57,39 @@ int main() {
     int led_state = 1;
     json j_msg_send, j_msg_rcv;
 
-    
     // Boucle pour tester la communication bidirectionnelle Arduino-PC
     for (int i = 0; i < 30; i++) {
         // Envoie message Arduino
-        //j_msg_send["led"] = led_state;
+        j_msg_send["Affichage"] = "X=" + to_string(recuX) + " Y=" + to_string(recuY) + " B=" + to_string(bouton);
+
+
         // Reception message Arduino
-        j_msg_rcv.clear(); // effacer le message precedent
+        
+        if(!SendToSerial(arduino, j_msg_send)){
+        cerr << "Erreur lors de l'envoie du message. " << endl;
+        }
+       
+        
+        j_msg_rcv.clear();
         if (!RcvFromSerial(arduino, raw_msg)) {
             cerr << "Erreur lors de la reception du message. " << endl;
         }
-        else {
-            cout << "On a eu un message" << endl;
-            cout << "Message size : " << raw_msg.size() << endl;
-        }
-
+       
+      
+        
         // Impression du message de l'Arduino si valide
         if (raw_msg.size() > 0) {
-            //cout << "raw_msg: " << raw_msg << endl;  // debug
+            // cout << "raw_msg: " << raw_msg << endl;  // debug
             // Transfert du message en json
             j_msg_rcv = json::parse(raw_msg);
             cout << "Message de l'Arduino: " << j_msg_rcv << endl;
-            
-            j_msg_send["led"] = "ALLO";
 
-            string rep;
-            cout << j_msg_send << endl;
-            cout << "Ecrire a l'ecran : Oui ou Non " << endl;
-            cin >> rep;
+            recuX = j_msg_rcv.value("X", 0);
+            recuY = j_msg_rcv.value("Y", 0);
+            bouton = j_msg_rcv.value("Bouton", 0);
 
-            if (rep == "Oui" || rep == "oui" || rep == "O" || rep == "o") {
-                // Envoi du message à l'Arduino
-                if (!SendToSerial(arduino, j_msg_send)) {
-                    cerr << "Erreur lors de l'envoie du message. " << endl;
-                }
-                else {
-                    cout << "Message envoyé à l'Arduino." << endl;
-                }
-            }
-            else {
-                cout << "Message non envoyé à l'Arduino." << endl;
-            }
 
-           
         }
-
-        //Changement de l'etat led
-        //led_state = !led_state;
-
-        // Bloquer le fil pour environ 1 sec
         Sleep(1000); // 1000ms
     }
     return 0;

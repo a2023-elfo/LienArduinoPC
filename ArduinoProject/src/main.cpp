@@ -33,7 +33,6 @@ int pinjoy_X= A15;
 int pinjoy_Y= A14;
 
 int SW1 = 30 ;
-int a =0;
 //int SW2 = PIN ;
 //int SW3 = PIN ;
 //int SW4 = PIN ;
@@ -56,10 +55,9 @@ void setup() {
   Serial.begin(BAUD);               // Initialisation de la communication serielle
   pinMode(pinLED, OUTPUT);
   digitalWrite(pinLED, ledState);
-  lcd.setCursor(0,0);
   lcd.begin(16, 2);
   lcd.print("Lien Arduino-PC");
-  
+
 }
 
 /* Boucle principale (infinie) */
@@ -211,13 +209,11 @@ void readMsg(){
   
   // Analyse des éléments du message message
   parse_msg = doc["Affichage"];
-
-  Serial.print(parse_msg.as<String>());
-  /*
-  if (!parse_msg.isNull()) {
-  lcd.setCursor(0,1);  
-  lcd.print(parse_msg);
   
-  }*/
+  if (!parse_msg.isNull()) {
+    lcd.clear();
+    lcd.setCursor(0,1);  
+    lcd.print(parse_msg.as<String>());
+  }
 }
 
