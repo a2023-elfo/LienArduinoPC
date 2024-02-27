@@ -49,7 +49,7 @@ int main() {
     json j_msg_send, j_msg_rcv;
 
     // Boucle pour tester la communication bidirectionnelle Arduino-PC
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 30; i++) {
         // Envoie message Arduino
         j_msg_send["led"] = led_state;
         if (!SendToSerial(arduino, j_msg_send)) {
