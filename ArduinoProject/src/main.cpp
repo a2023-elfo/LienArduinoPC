@@ -12,7 +12,7 @@
 /*------------------------------ Constantes ---------------------------------*/
 
 #define BAUD 9600        // Frequence de transmission serielle
-const int rs = 42, en = 40, d4 = 38, d5 = 36, d6 = 34, d7 = 32;
+const int rs = 22, en = 24, d4 = 26, d5 = 28, d6 = 30, d7 = 32;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 /*---------------------------- Variables globales ---------------------------*/
@@ -27,17 +27,17 @@ int joy_Y_Value = 0;
 int joy_X_etat = 0;
 int joy_Y_etat = 0;
 
-int pinLED = 24;
+int pinLED = 36;
 int pinPOT = A0;
 int pinjoy_X= A15;
 int pinjoy_Y= A14;
 
-int SW1 = 30 ;
-//int SW2 = PIN ;
-//int SW3 = PIN ;
-//int SW4 = PIN ;
-//int SW5 = PIN ;
-//int SW6 = PIN ;
+int SW1 = 27 ;
+int SW2 = 25 ;
+int SW3 = 23 ;
+int SW4 = 29 ;
+int SW5 = 53 ;
+int SW6 = 31 ;
 
 int bouton = 0 ;
  

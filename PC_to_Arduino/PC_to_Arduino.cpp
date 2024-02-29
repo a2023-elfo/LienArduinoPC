@@ -58,7 +58,7 @@ int main() {
     json j_msg_send, j_msg_rcv;
 
     // Boucle pour tester la communication bidirectionnelle Arduino-PC
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 40; i++) {
         // Envoie message Arduino
         j_msg_send["Affichage"] = "X=" + to_string(recuX) + " Y=" + to_string(recuY) + " B=" + to_string(bouton);
 
