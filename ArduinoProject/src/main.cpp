@@ -27,7 +27,10 @@ int joy_Y_Value = 0;
 int joy_X_etat = 0;
 int joy_Y_etat = 0;
 
-int pinLED = 36;
+int pinLED1 = 42;
+int pinLED2 = 40;
+int pinLED3 = 38;
+int pinLED4 = 36;
 int pinPOT = A0;
 int pinjoy_X= A15;
 int pinjoy_Y= A14;
@@ -53,8 +56,17 @@ void serialEvent();
 
 void setup() {
   Serial.begin(BAUD);               // Initialisation de la communication serielle
-  pinMode(pinLED, OUTPUT);
-  digitalWrite(pinLED, ledState);
+  pinMode(pinLED1, OUTPUT);
+  digitalWrite(pinLED1, HIGH);
+  pinMode(pinLED2, OUTPUT);
+  digitalWrite(pinLED2, HIGH);
+  pinMode(pinLED3, OUTPUT);
+  digitalWrite(pinLED3, HIGH);
+  pinMode(pinLED4, OUTPUT);
+  digitalWrite(pinLED4, HIGH);
+  
+  pinMode(37, OUTPUT);
+  digitalWrite(37, HIGH);
   lcd.begin(16, 2);
   lcd.print("Lien Arduino-PC");
 
@@ -120,37 +132,38 @@ void loop() {
     bouton = 1;
     delay(10);
   }
-  /*else if (digitalRead(SW2)== LOW)
+  else if (digitalRead(SW2)== HIGH)
   {
     bouton = 2;
-    delay(100);
+    delay(10);
   }
   else if (digitalRead(SW3)== LOW)
   {
     bouton = 3;
-    delay(100);
+    delay(10);
   }
   else if (digitalRead(SW4)== LOW)
   {
     bouton = 4;
-    delay(100);
+    delay(10);
   }
   else if (digitalRead(SW5)== LOW)
   {
     bouton = 5;
-    delay(100);
+    delay(10);
   }
   else if (digitalRead(SW6)== LOW)
   {
     bouton = 6;
-    delay(100);
-  }*/
+    delay(10);
+  }
   else
   {
     bouton = 0;
   }
 
-    
+
+  
    
   
   delay(10);  // delais de 10 ms
