@@ -89,7 +89,7 @@ void loop() {
   }
    else if (joy_Y_Value>800 && joy_X_Value<580 && joy_X_Value>480){
 
-    joy_Y_etat = 1;
+    joy_Y_etat = -1;
   }
   else if (joy_X_Value<200 && joy_Y_Value<580 && joy_Y_Value>480){
 
@@ -97,27 +97,27 @@ void loop() {
   }
   else if (joy_Y_Value<200 && joy_X_Value<580 && joy_X_Value>480){
 
-    joy_Y_etat = -1;
+    joy_Y_etat = 1;
   }
   //DIAGONALE
   else if (joy_Y_Value<200 && joy_X_Value>800 ){
 
-    joy_Y_etat = -1;
+    joy_Y_etat = 1;
     joy_X_etat = 1;
   }
   else if (joy_Y_Value<200 && joy_X_Value<200 ){
 
-    joy_Y_etat = -1;
+    joy_Y_etat = 1;
     joy_X_etat = -1;
   }
   else if (joy_Y_Value>800 && joy_X_Value<200 ){
 
-    joy_Y_etat = 1;
+    joy_Y_etat = -1;
     joy_X_etat = -1;
   }
   else if (joy_Y_Value>800 && joy_X_Value>800 ){
 
-    joy_Y_etat = 1;
+    joy_Y_etat = -1;
     joy_X_etat = 1;
   }
 
@@ -132,7 +132,7 @@ void loop() {
     bouton = 1;
     delay(10);
   }
-  else if (digitalRead(SW2)== HIGH)
+  else if (digitalRead(SW2)== LOW)
   {
     bouton = 2;
     delay(10);
