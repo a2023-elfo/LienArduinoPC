@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Auteurs: Jean-Samuel Lauzon
  * Date: Fevrier 2022
  * Modif : Janvier 2023, Compatible VisualStudio, JpGouin
@@ -38,11 +38,27 @@ int main() {
     cin >> com;
     arduino = new SerialPort(com.c_str(), BAUD);
 
-    //Struct. Donn�es JSON 
+    //Struct. Données JSON 
     int recuX = 0;
     int recuY = 0;
     int bouton = 0;
     
+    cout << "Hello Elfo ! 😊\n";
+
+    // Initialisation du port de communication
+    string com;
+    cout << "Entrer le port de communication du Arduino: ";
+    cin >> com;
+    arduino = new SerialPort(com.c_str(), BAUD);
+
+    if (!arduino->isConnected()) {
+        cerr << "Impossible de se connecter au port " << string(com) << ". Fermeture du programme!" << endl;
+        exit(1);
+    }
+    else {
+        cout << "Connexion OK " << endl;
+    }
+
     //const char com = "\\\\.\\COM3";
     //SerialPort arduino = SerialPort("\\\\.\\COM3");
     if (!arduino->isConnected()) {
@@ -114,28 +130,10 @@ bool RcvFromSerial(SerialPort* arduino, string& msg) {
     int buffer_size;
 
     msg.clear(); // clear string
-    // Read serialport until '\n' character (Blocking)
-
-    // Version fonctionnel dans VScode, mais non fonctionnel avec Visual Studio
-/*
-    while(msg.back()!='\n'){
-        if(msg.size()>MSG_MAX_SIZE){
-            return false;
-        }
-
-        buffer_size = arduino->readSerialPort(char_buffer, MSG_MAX_SIZE);
-        str_buffer.assign(char_buffer, buffer_size);
-        msg.append(str_buffer);
-    }
-*/
-
 // Version fonctionnelle dans VScode et Visual Studio
     buffer_size = arduino->readSerialPort(char_buffer, MSG_MAX_SIZE);
     str_buffer.assign(char_buffer, buffer_size);
     msg.append(str_buffer);
-
-    //msg.pop_back(); //remove '/n' from string
-
     return true;
 }
 
